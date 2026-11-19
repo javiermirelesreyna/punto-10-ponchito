@@ -7,6 +7,13 @@ Sistema sencillo para llevar **equipos, rol de juegos, resultados y estadística
 
 Todo vive en GitHub (gratis): el sitio en **GitHub Pages** y los datos en el archivo `data/torneos.json` del mismo repositorio.
 
+## Enlaces
+
+- **Página pública (para compartir):** <https://javiermirelesreyna.github.io/punto-10-ponchito/>
+  - Intersemanal: <https://javiermirelesreyna.github.io/punto-10-ponchito/#intersemanal>
+  - Sabatino: <https://javiermirelesreyna.github.io/punto-10-ponchito/#sabatino>
+- **Panel de administración:** <https://javiermirelesreyna.github.io/punto-10-ponchito/admin.html>
+
 ---
 
 ## Instalación (una sola vez)
@@ -14,7 +21,7 @@ Todo vive en GitHub (gratis): el sitio en **GitHub Pages** y los datos en el arc
 ### 1. Crea el repositorio
 1. Entra a <https://github.com> (crea una cuenta si no tienes).
 2. Arriba a la derecha: **+ → New repository**.
-3. Nombre: por ejemplo `torneos`. Déjalo **Public** (GitHub Pages gratis requiere repositorio público). Clic en **Create repository**.
+3. Nombre: por ejemplo `punto-10-ponchito`. Déjalo **Public** (GitHub Pages gratis requiere repositorio público). Clic en **Create repository**.
 
 ### 2. Sube los archivos
 1. En el repositorio nuevo, clic en **uploading an existing file** (o **Add file → Upload files**).
@@ -27,18 +34,18 @@ Todo vive en GitHub (gratis): el sitio en **GitHub Pages** y los datos en el arc
 2. En *Build and deployment* → *Source*: **Deploy from a branch**.
 3. *Branch*: **main** y carpeta **/ (root)** → **Save**.
 4. En 1–2 minutos tu sitio estará en:
-   - Página pública: `https://TU-USUARIO.github.io/torneos/`
-   - Panel: `https://TU-USUARIO.github.io/torneos/admin.html`
+   - Página pública: `https://javiermirelesreyna.github.io/punto-10-ponchito/`
+   - Panel: `https://javiermirelesreyna.github.io/punto-10-ponchito/admin.html`
 
 ### 4. Crea tu token de acceso (la "llave" para publicar)
 1. Abre <https://github.com/settings/personal-access-tokens/new> (Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → *Generate new token*).
 2. *Token name*: `Punto 10 panel`. *Expiration*: la que prefieras (por ejemplo 1 año).
-3. *Repository access*: **Only select repositories** → elige tu repositorio `torneos`.
+3. *Repository access*: **Only select repositories** → elige tu repositorio `punto-10-ponchito`.
 4. *Permissions* → *Repository permissions* → **Contents: Read and write**.
 5. **Generate token** y copia el texto que empieza con `github_pat_…` (solo se muestra una vez).
 
 ### 5. Conecta el panel
-1. Abre `https://TU-USUARIO.github.io/torneos/admin.html`.
+1. Abre `https://javiermirelesreyna.github.io/punto-10-ponchito/admin.html`.
 2. Usuario y repositorio se llenan solos. Pega el token y presiona **Conectar**.
 3. Listo. En ese navegador ya no te lo vuelve a pedir. En otro celular o computadora, repite este paso con el mismo token.
 
@@ -63,7 +70,7 @@ Todo vive en GitHub (gratis): el sitio en **GitHub Pages** y los datos en el arc
 Los cambios sin publicar se guardan en tu dispositivo; si cierras la página, al volver te pregunta si quieres recuperarlos.
 
 ### Agregar más torneos
-Botón **+ Torneo** en el panel. Cada torneo tiene su propio enlace, por ejemplo `https://TU-USUARIO.github.io/torneos/#sabatino`.
+Botón **+ Torneo** en el panel. Cada torneo tiene su propio enlace, por ejemplo `https://javiermirelesreyna.github.io/punto-10-ponchito/#sabatino`.
 
 ### Respaldos
 En **Configuración → Conexión y respaldo** puedes descargar un respaldo (`.json`) e importarlo después. Además, GitHub guarda el historial de cada publicación en el archivo `data/torneos.json` (pestaña *History*).
