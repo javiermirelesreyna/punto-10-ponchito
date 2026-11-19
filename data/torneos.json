@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "actualizado": null,
+  "torneos": [
+    {
+      "id": "intersemanal",
+      "nombre": "Intersemanal",
+      "descripcion": "Torneo entre semana",
+      "aviso": "",
+      "visible": true,
+      "reglas": {
+        "ptsVictoria": 3,
+        "ptsDerrota": 0,
+        "ptsDerrotaWO": 0,
+        "setsParaGanar": 3,
+        "clasifican": 0
+      },
+      "equipos": [],
+      "partidos": []
+    },
+    {
+      "id": "sabatino",
+      "nombre": "Sabatino",
+      "descripcion": "Torneo de los sábados",
+      "aviso": "",
+      "visible": true,
+      "reglas": {
+        "ptsVictoria": 3,
+        "ptsDerrota": 0,
+        "ptsDerrotaWO": 0,
+        "setsParaGanar": 3,
+        "clasifican": 0
+      },
+      "equipos": [],
+      "partidos": []
+    }
+  ]
+}
