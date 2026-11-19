@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": null,
+  "actualizado": "2026-11-19T16:01:51.070Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -15,8 +15,109 @@
         "setsParaGanar": 3,
         "clasifican": 0
       },
-      "equipos": [],
-      "partidos": []
+      "equipos": [
+        {
+          "id": "16r0rbzk6",
+          "nombre": "Picksin",
+          "jugadores": [
+            "Javier",
+            "Ilse"
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "nxvb9go5f",
+          "nombre": "Restaurante El Mirador",
+          "jugadores": [
+            "Gustavo",
+            "Hugo"
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "kukx6go5f",
+          "nombre": "Ledmotion",
+          "jugadores": [
+            "Julio",
+            "Cesar",
+            "Mateo"
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "lsz5cgo5f",
+          "nombre": "Jabatos FC",
+          "jugadores": [
+            "Abraham",
+            "Leandro"
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "qsi0igo5f",
+          "nombre": "Transportes Alzar",
+          "jugadores": [
+            "Alejandro",
+            "Fernando"
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "0nnbfgo5f",
+          "nombre": "Atoleros FC",
+          "jugadores": [],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "w4xbego5f",
+          "nombre": "Ramos FC",
+          "jugadores": [],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "veuwokufd",
+          "nombre": "Performance",
+          "jugadores": [],
+          "ajustes": {},
+          "notaAjuste": ""
+        }
+      ],
+      "partidos": [
+        {
+          "id": "7fo6dj3lq",
+          "local": "16r0rbzk6",
+          "visita": "nxvb9go5f",
+          "fecha": "2026-11-12",
+          "estado": "jugado",
+          "sl": 1,
+          "sv": 3
+        },
+        {
+          "id": "50ixpl5er",
+          "local": "qsi0igo5f",
+          "visita": "veuwokufd",
+          "fecha": "2026-11-11",
+          "estado": "jugado",
+          "sl": 3,
+          "sv": 0
+        },
+        {
+          "id": "lgilxlyfe",
+          "local": "16r0rbzk6",
+          "visita": "qsi0igo5f",
+          "fecha": "2026-11-17",
+          "estado": "jugado",
+          "sl": 3,
+          "sv": 1
+        }
+      ]
     },
     {
       "id": "sabatino",
