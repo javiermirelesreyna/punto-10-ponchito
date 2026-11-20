@@ -55,19 +55,27 @@ Todo vive en GitHub (gratis): el sitio en **GitHub Pages** y los datos en el arc
 
 ## Uso diario
 
-1. **Equipos**: agrega cada equipo con sus jugadores (o pega una lista completa). No hay que elegir colores: el circulito del equipo es **dorado** para el primer lugar, **blanco** para el último y **azul** para los demás, y cambia solo con la tabla.
+1. **Equipos**: agrega cada equipo con sus jugadores (o pega una lista completa). Toca un equipo para subir su **logo**, la **foto del equipo** y la **foto de cada jugador** (toca el círculo del jugador). Las imágenes se reducen solas en tu celular antes de subirse. El aro del logo es **dorado** para el primer lugar, **blanco** para el último y **azul** para los demás, y cambia solo con la tabla.
 2. **Rol y resultados**:
-   - En **Programar jornada** eliges el día de juego y los equipos que se enfrentan (los renglones que quieras) y presionas **Agregar al rol**.
-   - Los partidos se agrupan solos por semana: *"Semana del 16 al 20 de noviembre"*. Si todos los partidos del torneo son el mismo día (como el Sabatino), se muestra el día: *"Sábado, 21 de noviembre"*. No hay números de jornada ni horarios, así un equipo puede llevar más partidos que otro.
+   - En **Programar jornada** eliges el día de juego, los equipos que se enfrentan y, si quieres, la **hora** de cada partido; luego presionas **Agregar al rol**.
+   - Los partidos se agrupan solos por semana: *"Semana del 16 al 20 de noviembre"*. Si todos los partidos del torneo son el mismo día (como el Sabatino), se muestra el día: *"Sábado, 21 de noviembre"*. No hay números de jornada, así un equipo puede llevar más partidos que otro.
    - Escribe los sets de cada equipo (a ganar 3 de 5, por ejemplo 3-1): el partido pasa a **Jugado** y la tabla se recalcula sola. Si el marcador no es válido (3-3, 2-1…) se marca en rojo y no cuenta hasta que lo corrijas.
    - **W.O.**: si un equipo no se presenta, elige "W.O. · gana …" en el estado; cuenta como 3-0.
    - Puedes cambiar el día, los equipos o borrar cualquier partido.
 3. **Estadística**: puedes corregir cualquier número (PG, PP, SG, SP, PTS). Lo que escribas se guarda como *ajuste manual* (casilla dorada) y se respeta aunque sigas capturando resultados. Sirve para sanciones, partidos de antes del sistema, etc. La *nota pública* aparece debajo de la tabla.
-4. **Configuración**: nombre, descripción y aviso del torneo, puntos por ganar (3) y por perder (0), puntos por perder por W.O., sets para ganar (3), cuántos equipos clasifican (se marcan en verde) y el enlace directo para compartir.
-5. **Vista previa** te muestra la página con tus cambios antes de publicarlos.
-6. Presiona **Publicar** (o `Ctrl + S`). En unos segundos todos lo ven.
+4. **Información**: escribe el reglamento, premios, sede, contacto, etc. Aparece en la pestaña **Información** de la página pública con el título *"Reglamento e información del torneo"*. Formato sencillo: `# Título`, `- viñeta`, `1. lista`, `**negritas**` y enlaces https://… También puedes subir el cartel, fotos o el reglamento en PDF.
+5. **Configuración**: nombre, descripción y aviso del torneo, **torneo terminado** (pasa a *Anteriores* en la página pública y muestra al campeón), puntos por ganar (3) y por perder (0), puntos por perder por W.O., sets para ganar (3), cuántos equipos clasifican (se marcan en verde) y el enlace directo para compartir.
+6. **Vista previa** te muestra la página con tus cambios antes de publicarlos.
+7. Presiona **Publicar** (o `Ctrl + S`). En unos segundos todos lo ven.
 
 Los cambios sin publicar se guardan en tu dispositivo; si cierras la página, al volver te pregunta si quieres recuperarlos.
+
+### App para el público
+La página pública se puede **instalar como app** en el celular, con el ícono de Punto 10 y funcionando aunque no haya internet (muestra los últimos datos guardados):
+- **Android / Chrome:** botón verde **Instalar app** en la página.
+- **iPhone:** en Safari, botón **Compartir** → **Agregar a inicio** (el botón *Instalar app* muestra estos pasos).
+
+Al subir una versión nueva del sitio, cambia el número `VERSION` en `sw.js` para que las apps instaladas se actualicen.
 
 ### Agregar más torneos
 Botón **+ Torneo** en el panel. Cada torneo tiene su propio enlace, por ejemplo `https://javiermirelesreyna.github.io/punto-10-ponchito/#sabatino`.

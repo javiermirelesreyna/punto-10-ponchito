@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Punto 10 Fútbol Tenis · Torneos</title>
   <meta name="description" content="Tabla de posiciones, rol de juegos y resultados de los torneos de Punto 10 Fútbol Tenis.">
   <meta name="theme-color" content="#030a22">
@@ -10,12 +10,17 @@
   <meta property="og:title" content="Punto 10 Fútbol Tenis · Torneos">
   <meta property="og:description" content="Tabla de posiciones, rol de juegos y resultados en vivo.">
   <meta property="og:image" content="assets/og.jpg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Punto 10">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=3">
+  <link rel="stylesheet" href="assets/styles.css?v=4">
 </head>
 <body class="publico">
   <header class="hero">
@@ -26,7 +31,13 @@
           <p class="eyebrow">Torneo de fútbol tenis</p>
           <h1 class="display" id="titulo"><span class="gold-text">Torneos</span></h1>
           <p class="desc" id="desc"></p>
-          <p class="live"><span class="dot" id="dot"></span><span id="actualizado">Cargando…</span></p>
+          <div class="hero-acc">
+            <p class="live"><span class="dot" id="dot"></span><span id="actualizado">Cargando…</span></p>
+            <button type="button" class="btn sm instalar" id="instalar" data-act="instalar" hidden>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+              Instalar app
+            </button>
+          </div>
         </div>
       </div>
       <nav class="seg" id="torneos" aria-label="Torneos"></nav>
@@ -44,8 +55,8 @@
     Punto 10 Fútbol Tenis · by Fit &amp; work
   </footer>
 
-  <script src="config.js?v=3"></script>
-  <script src="assets/common.js?v=3"></script>
-  <script src="assets/public.js?v=3"></script>
+  <script src="config.js?v=4"></script>
+  <script src="assets/common.js?v=4"></script>
+  <script src="assets/public.js?v=4"></script>
 </body>
 </html>
