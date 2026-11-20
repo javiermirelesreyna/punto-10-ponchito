@@ -44,9 +44,75 @@
     return (p.length === 1 ? p[0].slice(0, 2) : p[0][0] + p[1][0]).toUpperCase();
   }
 
-  /** Circulito del equipo. tono: 'oro' (1.º), 'blanco' (último) o 'azul'. */
+  /* ---------- imágenes (logos y fotos) ---------- */
+  // Solo se aceptan rutas del propio repositorio (media/...) o imágenes incrustadas (modo prueba).
+  function imagenValida(v) {
+    if (typeof v !== 'string') return '';
+    if (/^media\/[A-Za-z0-9_\-/]+\.(webp|png|jpe?g)$/.test(v) && !v.includes('..')) return v;
+    if (/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v)) return v;
+    return '';
+  }
+  function pdfValido(v) {
+    if (typeof v !== 'string') return '';
+    if (/^media\/[A-Za-z0-9_\-/]+\.pdf$/.test(v) && !v.includes('..')) return v;
+    if (/^data:application\/pdf;base64,[A-Za-z0-9+/=]+$/.test(v)) return v;
+    return '';
+  }
+
+  /** Texto del reglamento con formato sencillo: # título, - viñetas, 1. listas, **negritas** y enlaces. */
+  function formatoInfo(texto) {
+    const enLinea = s => esc(s)
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    const out = [];
+    let parrafo = [], lista = null;
+    const cerrarParrafo = () => { if (parrafo.length) { out.push(`<p>${parrafo.join('<br>')}</p>`); parrafo = []; } };
+    const cerrarLista = () => { if (lista) { out.push(`<${lista.tipo}>${lista.items.map(i => `<li>${i}</li>`).join('')}</${lista.tipo}>`); lista = null; } };
+    String(texto || '').replace(/\r/g, '').split('\n').forEach(linea => {
+      const l = linea.trim();
+      let m;
+      if (!l) { cerrarParrafo(); cerrarLista(); return; }
+      if ((m = /^(#{1,3})\s+(.+)$/.exec(l))) {
+        cerrarParrafo(); cerrarLista();
+        out.push(`<h${m[1].length + 2}>${enLinea(m[2])}</h${m[1].length + 2}>`);
+      } else if ((m = /^[-*•]\s+(.+)$/.exec(l)) || (m = /^(\d+)[.)]\s+(.+)$/.exec(l))) {
+        cerrarParrafo();
+        const tipo = /^\d/.test(l) ? 'ol' : 'ul';
+        if (!lista || lista.tipo !== tipo) { cerrarLista(); lista = { tipo, items: [] }; }
+        lista.items.push(enLinea(m[m.length - 1]));
+      } else {
+        cerrarLista();
+        parrafo.push(enLinea(l));
+      }
+    });
+    cerrarParrafo(); cerrarLista();
+    return out.join('\n');
+  }
+
+  const cacheImg = {};                     // imágenes recién subidas (se ven antes de que GitHub Pages actualice)
+  const srcImg = v => cacheImg[v] || v;
+  function urlRaw(ruta) {
+    const r = detectarRepo();
+    return r.owner && r.repo ? `https://raw.githubusercontent.com/${r.owner}/${r.repo}/${r.branch || 'main'}/${ruta}` : '';
+  }
+  /** Si la imagen aún no está en el sitio, se intenta directo del repositorio; si tampoco, se quita. */
+  function imgFallo(img) {
+    const ruta = img.getAttribute('data-src') || '';
+    if (!img.dataset.raw && ruta && !ruta.startsWith('data:')) {
+      const u = urlRaw(ruta);
+      if (u) { img.dataset.raw = '1'; img.src = u; return; }
+    }
+    img.remove();
+  }
+  function imgTag(src, alt, cls) {
+    if (!src) return '';
+    return `<img src="${esc(srcImg(src))}" data-src="${esc(src)}" alt="${esc(alt || '')}"${cls ? ` class="${cls}"` : ''} loading="lazy" decoding="async" onerror="P10.imgFallo(this)">`;
+  }
+
+  /** Circulito del equipo (logo o iniciales). tono: 'oro' (1.º), 'blanco' (último) o 'azul'. */
   function badge(e, cls, tono) {
-    return `<span class="badge ${tono || 'azul'} ${cls || ''}" aria-hidden="true">${esc(e ? iniciales(e.nombre) : '?')}</span>`;
+    const logo = e && e.logo ? imgTag(e.logo, '') : '';
+    return `<span class="badge ${tono || 'azul'}${logo ? ' con-logo' : ''} ${cls || ''}" aria-hidden="true">${esc(e ? iniciales(e.nombre) : '?')}${logo}</span>`;
   }
 
   /* ---------- fechas ---------- */
@@ -61,6 +127,12 @@
     const d = fechaLocal(s);
     if (!d) return '';
     return d.toLocaleDateString('es-MX', opts || { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
+  }
+  function fmtHora(h) {
+    const m = /^(\d{1,2}):(\d{2})/.exec(h || '');
+    if (!m) return '';
+    const H = +m[1];
+    return `${H % 12 || 12}:${m[2]} ${H >= 12 ? 'pm' : 'am'}`;
   }
   function haceCuanto(iso) {
     if (!iso) return '';
@@ -77,7 +149,8 @@
 
   /* ---------- modelo de datos ---------- */
   function nuevoTorneo(nombre, id) {
-    return { id: id || uid(), nombre: nombre || 'Torneo', descripcion: '', aviso: '', visible: true,
+    return { id: id || uid(), nombre: nombre || 'Torneo', descripcion: '', aviso: '', visible: true, finalizado: false,
+      info: '', infoAdjuntos: [],
       reglas: Object.assign({}, REGLAS_DEF), equipos: [], partidos: [] };
   }
 
@@ -100,6 +173,16 @@
       t.descripcion = String(t.descripcion || '');
       t.aviso = String(t.aviso || '');
       t.visible = t.visible !== false;
+      t.finalizado = !!t.finalizado;
+      t.info = String(t.info || '');
+      t.infoAdjuntos = (Array.isArray(t.infoAdjuntos) ? t.infoAdjuntos : [])
+        .filter(a => a && typeof a === 'object')
+        .map(a => {
+          const tipo = a.tipo === 'pdf' ? 'pdf' : 'img';
+          const ruta = tipo === 'pdf' ? pdfValido(a.ruta) : imagenValida(a.ruta);
+          return { id: String(a.id || uid()), nombre: String(a.nombre || (tipo === 'pdf' ? 'Documento' : 'Imagen')).slice(0, 80), tipo, ruta };
+        })
+        .filter(a => a.ruta);
 
       const r = Object.assign({}, REGLAS_DEF, t.reglas || {});
       const reglas = {};
@@ -113,10 +196,16 @@
         const fuente = { pg: viejo.pg, pp: viejo.pp, sg: viejo.sg != null ? viejo.sg : viejo.sf, sp: viejo.sp != null ? viejo.sp : viejo.sc, pts: viejo.pts };
         const ajustes = {};
         CAMPOS.concat('pts').forEach(k => { const v = Math.round(num(fuente[k])); if (v) ajustes[k] = v; });
+        const jugadores = (Array.isArray(e.jugadores) ? e.jugadores : [])
+          .map(j => (typeof j === 'string' ? { nombre: j } : j))
+          .filter(j => j && typeof j === 'object' && String(j.nombre || '').trim())
+          .map(j => ({ id: String(j.id || uid()), nombre: String(j.nombre).trim(), foto: imagenValida(j.foto) }));
         return {
           id: String(e.id || uid()),
           nombre: String(e.nombre || 'Equipo'),
-          jugadores: Array.isArray(e.jugadores) ? e.jugadores.map(String).filter(s => s.trim()) : [],
+          logo: imagenValida(e.logo),
+          foto: imagenValida(e.foto),
+          jugadores,
           ajustes,
           notaAjuste: String(e.notaAjuste || '')
         };
@@ -142,6 +231,7 @@
           local: String(p.local || ''),
           visita: String(p.visita || ''),
           fecha: /^\d{4}-\d{2}-\d{2}$/.test(p.fecha || '') ? p.fecha : '',
+          hora: /^\d{2}:\d{2}$/.test(p.hora || '') ? p.hora : '',
           estado: ESTADOS.includes(p.estado) ? p.estado : 'pendiente',
           sl, sv
         };
@@ -166,13 +256,16 @@
     return Object.assign(out, { contado: true, sl: p.sl, sv: p.sv, ganador: p.sl > p.sv ? 'local' : 'visita' });
   }
 
-  /** Partidos ordenados por fecha; con `recientes` el más reciente va primero. Sin fecha, al final. */
+  /** Partidos ordenados por fecha; con `recientes` el día más reciente va primero.
+      Dentro del mismo día, por hora. Sin fecha, al final. */
   function partidosOrdenados(t, lista, recientes) {
     return (lista || t.partidos).map((p, i) => [p, i]).sort((a, b) => {
       const fa = a[0].fecha, fb = b[0].fecha;
       if (!fa !== !fb) return !fa ? 1 : -1;
       const c = (fa || '').localeCompare(fb || '');
-      return (recientes ? -c : c) || a[1] - b[1];
+      if (c) return recientes ? -c : c;
+      const ha = a[0].hora || '99:99', hb = b[0].hora || '99:99';
+      return ha.localeCompare(hb) || a[1] - b[1];
     }).map(x => x[0]);
   }
 
@@ -308,8 +401,8 @@
     return { owner: owner || '', repo: repo || '', branch: CFG.branch || 'main', dataPath: CFG.dataPath };
   }
 
-  function urlContenido(repo) {
-    const ruta = String(repo.dataPath || CFG.dataPath).split('/').map(encodeURIComponent).join('/');
+  function urlContenido(repo, archivo) {
+    const ruta = String(archivo || repo.dataPath || CFG.dataPath).split('/').map(encodeURIComponent).join('/');
     return `https://api.github.com/repos/${encodeURIComponent(repo.owner)}/${encodeURIComponent(repo.repo)}/contents/${ruta}`;
   }
 
@@ -335,10 +428,15 @@
     return { sha: j.sha, data: JSON.parse(b64Decode(j.content)) };
   }
 
-  async function escribirGitHub(repo, token, contenido, sha, mensaje) {
-    const body = { message: mensaje, content: b64Encode(contenido), branch: repo.branch || 'main' };
+  function escribirGitHub(repo, token, contenido, sha, mensaje) {
+    return escribirArchivoGitHub(repo, token, null, b64Encode(contenido), sha, mensaje);
+  }
+
+  /** Crea o reemplaza un archivo del repositorio. `base64` ya viene codificado (sirve para imágenes). */
+  async function escribirArchivoGitHub(repo, token, archivo, base64, sha, mensaje) {
+    const body = { message: mensaje, content: base64, branch: repo.branch || 'main' };
     if (sha) body.sha = sha;
-    const r = await fetch(urlContenido(repo), {
+    const r = await fetch(urlContenido(repo, archivo), {
       method: 'PUT',
       headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -384,12 +482,13 @@
   window.P10 = {
     CFG, REGLAS_DEF, CAMPOS, KEY_BORRADOR, KEY_CONEXION,
     uid, num, numONulo, esc, capital, slug, iniciales, badge,
-    fechaLocal, isoFecha, fmtFecha, haceCuanto,
+    imagenValida, pdfValido, formatoInfo, cacheImg, imgTag, imgFallo,
+    fechaLocal, isoFecha, fmtFecha, fmtHora, haceCuanto,
     nuevoTorneo, datosIniciales, normalizar,
     resultado, partidosOrdenados, equipoPorId, calcularTabla, tonosEquipos,
     lunesDe, agruparSemanas, estadoGrupo,
     b64Encode, b64Decode,
-    detectarRepo, leerGitHub, escribirGitHub, verificarRepo, leerArchivoLocal, cargarDatosPublicos,
+    detectarRepo, leerGitHub, escribirGitHub, escribirArchivoGitHub, verificarRepo, leerArchivoLocal, cargarDatosPublicos,
     leerBorrador: () => leerLS(KEY_BORRADOR),
     guardarBorrador: v => guardarLS(KEY_BORRADOR, v),
     borrarBorrador: () => borrarLS(KEY_BORRADOR),

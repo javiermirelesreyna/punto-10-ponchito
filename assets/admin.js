@@ -8,12 +8,12 @@
   const esc = P.esc;
   const $ = (s, r) => (r || document).querySelector(s);
 
-  const SECCIONES = [['equipos', 'Equipos'], ['rol', 'Rol y resultados'], ['estadistica', 'Estadística'], ['config', 'Configuración']];
+  const SECCIONES = [['equipos', 'Equipos'], ['rol', 'Rol y resultados'], ['estadistica', 'Estadística'], ['info', 'Información'], ['config', 'Configuración']];
 
   const S = {
     data: null, conn: null, sha: null, torneoId: null, seccion: 'equipos',
     dirty: false, version: 0, publicando: false, ocultarJugadas: false,
-    prog: null, irA: null, foco: null
+    prog: null, irA: null, foco: null, abiertos: new Set()
   };
   let TONOS = new Map();
   const bdg = e => P.badge(e, '', e ? TONOS.get(e.id) : null);
@@ -28,7 +28,9 @@
     link: svg('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>'),
     recargar: svg('<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>'),
     salir: svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'),
-    calendario: svg('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>')
+    calendario: svg('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>'),
+    foto: svg('<path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/>'),
+    chev: svg('<path d="M6 9l6 6 6-6"/>')
   };
 
   /* ---------- utilidades ---------- */
@@ -194,12 +196,13 @@
     const t = torneo();
     if (t) { S.torneoId = t.id; TONOS = P.tonosEquipos(t); }
     const torneos = S.data.torneos.map(x =>
-      `<button type="button" data-act="torneo" data-id="${esc(x.id)}" aria-pressed="${!!t && x.id === t.id}">${esc(x.nombre)}${x.visible ? '' : ' · oculto'}</button>`).join('');
+      `<button type="button" data-act="torneo" data-id="${esc(x.id)}" aria-pressed="${!!t && x.id === t.id}">${esc(x.nombre)}${x.finalizado ? ' · terminado' : ''}${x.visible ? '' : ' · oculto'}</button>`).join('');
     let cuerpo;
     if (!t) {
       cuerpo = `<div class="card vacio" style="margin-top:20px"><p>No hay torneos. Crea uno con el botón <b>+ Torneo</b>.</p></div><div style="margin-top:16px">${secConexion()}</div>`;
     } else {
-      const sec = S.seccion === 'rol' ? secRol(t) : S.seccion === 'estadistica' ? secEstadistica(t) : S.seccion === 'config' ? secConfig(t) : secEquipos(t);
+      const sec = S.seccion === 'rol' ? secRol(t) : S.seccion === 'estadistica' ? secEstadistica(t)
+        : S.seccion === 'info' ? secInfo(t) : S.seccion === 'config' ? secConfig(t) : secEquipos(t);
       cuerpo = `<nav class="tabs" role="tablist" aria-label="Secciones">${SECCIONES.map(([id, n]) =>
         `<button type="button" role="tab" data-act="seccion" data-sec="${id}" aria-selected="${S.seccion === id}">${n}</button>`).join('')}</nav>${sec}`;
     }
@@ -210,20 +213,62 @@
   }
 
   /* ---------- sección: equipos ---------- */
+  function campoImagen(e, tipo, etiqueta) {
+    const id = esc(e.id), valor = e[tipo];
+    const vacio = tipo === 'logo' ? esc(P.iniciales(e.nombre)) : 'Sin foto';
+    return `<div class="img-campo">
+      <span class="f-label">${etiqueta}</span>
+      <div class="img-prev ${tipo}">${valor ? P.imgTag(valor, '') : `<span>${vacio}</span>`}</div>
+      <div class="img-acc">
+        <label class="btn sm">${ICO.foto} ${valor ? 'Cambiar' : 'Subir'}<input type="file" accept="image/*" hidden data-img="${tipo}" data-id="${id}"></label>
+        ${valor ? `<button class="btn sm ghost" data-act="quitar-img" data-tipo="${tipo}" data-id="${id}">Quitar</button>` : ''}
+      </div>
+    </div>`;
+  }
+
+  function editorEquipo(e, partidos) {
+    const id = esc(e.id);
+    const plantel = e.jugadores.map(j => {
+      const pl = esc(j.id);
+      return `<li>
+        <label class="jug-foto" title="${j.foto ? 'Cambiar foto' : 'Subir foto'} de ${esc(j.nombre)}">${esc(P.iniciales(j.nombre))}${j.foto ? P.imgTag(j.foto, '') : ''}
+          <input type="file" accept="image/*" hidden data-img="jugador" data-id="${id}" data-pl="${pl}"></label>
+        <input type="text" value="${esc(j.nombre)}" data-ch="jugador" data-id="${id}" data-pl="${pl}" data-fk="j:${pl}" maxlength="40" aria-label="Nombre del jugador">
+        ${j.foto ? `<button class="btn sm ghost" data-act="quitar-img" data-tipo="jugador" data-id="${id}" data-pl="${pl}" title="Quitar foto">Quitar foto</button>` : '<span></span>'}
+        <button class="btn icon danger" data-act="borrar-jugador" data-id="${id}" data-pl="${pl}" title="Eliminar jugador" aria-label="Eliminar a ${esc(j.nombre)}">${ICO.basura}</button>
+      </li>`;
+    }).join('');
+
+    return `<details class="eq-ed" data-eq="${id}" ${S.abiertos.has(e.id) ? 'open' : ''}>
+      <summary>
+        ${bdg(e)}<span class="eq-ed-nom">${esc(e.nombre)}</span>
+        <span class="muted small">${plural(e.jugadores.length, 'jugador', 'jugadores')} · ${plural(partidos, 'partido', 'partidos')}</span>
+        <span class="chev">${ICO.chev}</span>
+      </summary>
+      <div class="eq-ed-body">
+        <div class="eq-ed-fila">
+          <label class="f">Nombre del equipo<input type="text" value="${esc(e.nombre)}" data-ch="equipo" data-k="nombre" data-id="${id}" data-fk="e:${id}:nombre" maxlength="40"></label>
+          <button class="btn sm danger" data-act="borrar-equipo" data-id="${id}">${ICO.basura} Eliminar equipo</button>
+        </div>
+        <div class="eq-ed-imgs">
+          ${campoImagen(e, 'logo', 'Logo del equipo')}
+          ${campoImagen(e, 'foto', 'Foto del equipo')}
+        </div>
+        <div>
+          <span class="f-label">Jugadores · toca el círculo para subir la foto de cada uno</span>
+          ${plantel ? `<ul class="plantel-ed">${plantel}</ul>` : '<p class="muted small" style="margin:0 0 8px">Todavía no hay jugadores.</p>'}
+        </div>
+        <form class="agregar-jug" data-form="jugador" data-id="${id}" autocomplete="off">
+          <input type="text" name="nombre" maxlength="40" placeholder="Nombre del jugador" data-fk="nj:${id}" aria-label="Nombre del nuevo jugador">
+          <button class="btn sm green" type="submit">${ICO.mas} Agregar jugador</button>
+        </form>
+      </div>
+    </details>`;
+  }
+
   function secEquipos(t) {
     const conteo = id => t.partidos.filter(p => p.local === id || p.visita === id).length;
     const otros = S.data.torneos.filter(x => x.id !== t.id && x.equipos.length);
-
-    const lista = t.equipos.map(e => {
-      const id = esc(e.id);
-      return `<div class="eq-row">
-        ${bdg(e)}
-        <input type="text" value="${esc(e.nombre)}" data-ch="equipo" data-k="nombre" data-id="${id}" data-fk="e:${id}:nombre" maxlength="40" aria-label="Nombre del equipo">
-        <input type="text" class="jug" value="${esc(e.jugadores.join(', '))}" data-ch="equipo" data-k="jugadores" data-id="${id}" data-fk="e:${id}:jug" placeholder="Jugadores separados por coma" aria-label="Jugadores de ${esc(e.nombre)}">
-        <span class="muted small cuenta">${plural(conteo(e.id), 'partido', 'partidos')}</span>
-        <button class="btn icon danger" data-act="borrar-equipo" data-id="${id}" title="Eliminar equipo" aria-label="Eliminar ${esc(e.nombre)}">${ICO.basura}</button>
-      </div>`;
-    }).join('');
 
     return `<section class="card">
         <div class="card-h"><h2>Agregar equipo</h2></div>
@@ -247,8 +292,8 @@
       </section>
       <section class="card">
         <div class="card-h"><h2>Equipos · ${t.equipos.length}</h2></div>
-        <p class="ayuda">El circulito cambia solo según la tabla: <b>dorado</b> el primer lugar, <b>blanco</b> el último y <b>azul</b> los demás.</p>
-        ${t.equipos.length ? lista : '<p class="muted">Todavía no hay equipos en este torneo.</p>'}
+        <p class="ayuda">Toca un equipo para cambiar su nombre, subir su <b>logo</b>, la <b>foto del equipo</b> y la foto de cada <b>jugador</b>. Las imágenes se reducen solas para que carguen rápido. El aro del logo cambia de color según la tabla: <b>dorado</b> el primer lugar, <b>blanco</b> el último y <b>azul</b> los demás.</p>
+        ${t.equipos.length ? t.equipos.map(e => editorEquipo(e, conteo(e.id))).join('') : '<p class="muted">Todavía no hay equipos en este torneo.</p>'}
       </section>`;
   }
 
@@ -258,7 +303,7 @@
     if (/s[aá]bad/i.test(`${t.nombre} ${t.descripcion}`)) d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
     return P.isoFecha(d);
   }
-  const filasVacias = t => Array.from({ length: Math.max(1, Math.floor(t.equipos.length / 2)) }, () => ({ l: '', v: '' }));
+  const filasVacias = t => Array.from({ length: Math.max(1, Math.floor(t.equipos.length / 2)) }, () => ({ l: '', v: '', h: '' }));
   function prog(t) {
     if (!S.prog || S.prog.torneoId !== t.id) S.prog = { torneoId: t.id, fecha: fechaSugerida(t), filas: filasVacias(t) };
     return S.prog;
@@ -283,7 +328,8 @@
         <select data-ch="prog" data-k="l" data-i="${i}" data-fk="prog:${i}:l" aria-label="Enfrentamiento ${i + 1}, primer equipo">${opciones(f.l)}</select>
         <span class="vs-txt">VS</span>
         <select data-ch="prog" data-k="v" data-i="${i}" data-fk="prog:${i}:v" aria-label="Enfrentamiento ${i + 1}, segundo equipo">${opciones(f.v)}</select>
-        <button class="btn icon ghost" data-act="prog-quitar" data-i="${i}" ${pr.filas.length === 1 ? 'disabled' : ''} title="Quitar renglón" aria-label="Quitar enfrentamiento ${i + 1}">${ICO.basura}</button>
+        <input type="time" value="${esc(f.h || '')}" data-ch="prog" data-k="h" data-i="${i}" data-fk="prog:${i}:h" aria-label="Hora del enfrentamiento ${i + 1}" title="Hora (opcional)">
+        <button class="btn icon ghost quitar" data-act="prog-quitar" data-i="${i}" ${pr.filas.length === 1 ? 'disabled' : ''} title="Quitar renglón" aria-label="Quitar enfrentamiento ${i + 1}">${ICO.basura}</button>
       </div>`).join('');
 
     let ocultas = 0;
@@ -302,7 +348,7 @@
 
     return `<section class="card">
         <div class="card-h"><h2>Programar jornada</h2></div>
-        <p class="ayuda">Elige el día de juego y los equipos que se enfrentan. Al agregarlos aparecen abajo, agrupados por semana, para capturar los sets.</p>
+        <p class="ayuda">Elige el día de juego, los equipos que se enfrentan y, si quieres, la hora de cada partido. Al agregarlos aparecen abajo, agrupados por semana, para capturar los sets.</p>
         <div class="prog">
           <label class="f dia">Día de juego<input type="date" value="${esc(pr.fecha)}" data-ch="prog" data-k="fecha" data-fk="prog:fecha"></label>
           <div class="prog-filas">${filas}</div>
@@ -356,6 +402,7 @@
       </div>
       <div class="pe-row">
         <input type="date" value="${esc(p.fecha)}" data-ch="partido" data-k="fecha" ${ids} ${fk('fecha')} aria-label="Día del partido">
+        <input type="time" value="${esc(p.hora)}" data-ch="partido" data-k="hora" ${ids} ${fk('hora')} aria-label="Hora del partido" title="Hora (opcional)">
         <select class="estado-sel" data-ch="partido" data-k="estado" ${ids} ${fk('estado')} aria-label="Estado del partido">
           ${estados.map(([v, nombre]) => `<option value="${v}" ${p.estado === v ? 'selected' : ''}>${esc(nombre)}</option>`).join('')}
         </select>
@@ -403,6 +450,98 @@
     </section>`;
   }
 
+  /* ---------- sección: información y reglamento ---------- */
+  const EJEMPLO_INFO = '# Reglamento\n- Los partidos son a ganar 3 de 5 sets.\n- **Tolerancia:** 10 minutos; después se pierde por W.O.\n\n# Premios\n1. Primer lugar: trofeo y medallas\n2. Segundo lugar: medallas\n\nInscripciones e informes: https://wa.me/...';
+
+  function secInfo(t) {
+    const adjuntos = t.infoAdjuntos.map(a => {
+      const id = esc(a.id);
+      return `<li>
+        <span class="adj-prev ${a.tipo}">${a.tipo === 'img' ? P.imgTag(a.ruta, '') : 'PDF'}</span>
+        <input type="text" value="${esc(a.nombre)}" data-ch="adjunto" data-adj="${id}" data-fk="adj:${id}" maxlength="80" aria-label="Nombre del archivo">
+        <button class="btn icon danger" data-act="borrar-adj" data-adj="${id}" title="Quitar" aria-label="Quitar ${esc(a.nombre)}">${ICO.basura}</button>
+      </li>`;
+    }).join('');
+    const hash = encodeURIComponent(t.id);
+    return `<section class="card">
+        <div class="card-h"><h2>Reglamento e información</h2>
+          <a class="btn sm ghost" href="index.html?borrador=1#${hash}/info" target="_blank" rel="noopener">${ICO.ojo} Ver en la página</a></div>
+        <p class="ayuda">Lo que escribas aquí aparece en la pestaña <b>Información</b> de la página pública, con el título “Reglamento e información del torneo”.
+          Formato sencillo: una línea que empiece con <code>#</code> es un título, con <code>-</code> es una viñeta, con <code>1.</code> es una lista numerada,
+          <code>**texto**</code> va en negritas y los enlaces (https://…) se pueden tocar.</p>
+        <div class="info-ed">
+          <label class="f">Texto<textarea rows="18" data-ch="torneo" data-k="info" data-vivo="info" data-fk="t:info" placeholder="${esc(EJEMPLO_INFO)}">${esc(t.info)}</textarea></label>
+          <div><span class="f-label">Así se verá</span>
+            <div class="info-prev info-texto" id="info-prev">${P.formatoInfo(t.info) || '<p class="muted">Escribe a la izquierda para ver cómo queda.</p>'}</div></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>Imágenes y documentos</h2></div>
+        <p class="ayuda">Opcional: sube el cartel del torneo, fotos o el reglamento en PDF. Se muestran debajo del texto. Las imágenes se reducen solas.</p>
+        ${adjuntos ? `<ul class="adjuntos-ed">${adjuntos}</ul>` : ''}
+        <label class="btn green">${ICO.mas} Subir imagen o PDF<input type="file" accept="image/*,application/pdf,.pdf" multiple hidden data-adjunto="1"></label>
+      </section>`;
+  }
+
+  let tInfo = null;
+  function escribiendoInfo(el) {
+    const t = torneo();
+    if (!t) return;
+    t.info = el.value;
+    S.version++;
+    if (!S.dirty) { S.dirty = true; const h = $('.barra'); if (h) h.outerHTML = barra(); }
+    clearTimeout(tInfo);
+    tInfo = setTimeout(() => {
+      const prev = $('#info-prev');
+      if (prev) prev.innerHTML = P.formatoInfo(t.info) || '<p class="muted">Escribe a la izquierda para ver cómo queda.</p>';
+      P.guardarBorrador({ data: S.data, fecha: new Date().toISOString() });
+    }, 250);
+  }
+
+  const leerDataURL = file => new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result));
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+
+  async function subirAdjuntos(input) {
+    const files = [...(input.files || [])];
+    input.value = '';
+    const t = torneo();
+    if (!t || !files.length) return;
+    let n = 0;
+    for (const file of files) {
+      const esPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+      const nombre = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim().slice(0, 80) || (esPdf ? 'Reglamento' : 'Imagen');
+      let url, ext;
+      if (esPdf) {
+        const maxMB = modoPrueba() ? 1.5 : 15;
+        if (file.size > maxMB * 1024 * 1024) { toast(`“${nombre}” pesa más de ${maxMB} MB.`, 'err'); continue; }
+        url = (await leerDataURL(file)).replace(/^data:[^;]*;base64,/, 'data:application/pdf;base64,');
+        ext = 'pdf';
+      } else {
+        toast('Preparando imagen…');
+        try { const img = await procesarImagen(file, OPC_IMG.info); url = img.url; ext = img.ext; }
+        catch (err) { toast(`No pude leer “${nombre}”. Prueba con JPG o PNG.`, 'err'); continue; }
+      }
+      let ruta = url;
+      if (!modoPrueba()) {
+        ruta = `media/${P.slug(t.id)}/info-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}.${ext}`;
+        toast(`Subiendo “${nombre}” a GitHub…`);
+        try {
+          await P.escribirArchivoGitHub(repoDe(S.conn), S.conn.token, ruta, url.slice(url.indexOf(',') + 1), null, `Información del torneo: ${nombre}`);
+        } catch (err) { toast(mensajeError(err), 'err'); continue; }
+        if (!esPdf) P.cacheImg[ruta] = url;
+      }
+      t.infoAdjuntos.push({ id: P.uid(), nombre, tipo: esPdf ? 'pdf' : 'img', ruta });
+      n++;
+    }
+    if (!n) return;
+    cambio(true);
+    toast(`${n === 1 ? 'Archivo agregado' : `${n} archivos agregados`}. Presiona Publicar para que todos lo vean.`);
+  }
+
   /* ---------- sección: configuración ---------- */
   function secConexion() {
     const c = S.conn || {};
@@ -438,6 +577,7 @@
           <label class="f">Descripción (días, sede)<input type="text" value="${esc(t.descripcion)}" data-ch="torneo" data-k="descripcion" data-fk="t:desc" maxlength="120" placeholder="Martes y jueves"></label>
           <label class="f">Aviso para el público (opcional)<textarea rows="3" data-ch="torneo" data-k="aviso" data-fk="t:aviso" maxlength="400" placeholder="Ej. Esta semana no hay jornada por día festivo.">${esc(t.aviso)}</textarea></label>
           <label class="check"><input type="checkbox" data-ch="torneo" data-k="visible" ${t.visible ? 'checked' : ''}> Mostrar este torneo en la página pública</label>
+          <label class="check"><input type="checkbox" data-ch="torneo" data-k="finalizado" ${t.finalizado ? 'checked' : ''}> Torneo terminado: pasa a “Anteriores” y muestra al campeón</label>
           <div><span class="small muted">Enlace directo a este torneo</span>
             <div class="enlace"><code>${esc(enlace)}</code><button class="btn sm" data-act="copiar-enlace" data-url="${esc(enlace)}">${ICO.link} Copiar</button></div></div>
         </div>
@@ -607,6 +747,91 @@
     toast('Respaldo importado.');
   }
 
+  /* ---------- imágenes: logo, foto del equipo y fotos de jugadores ---------- */
+  const OPC_IMG = {
+    logo: { modo: 'contener', lado: 256, alfa: true },      // cuadrado, sin recortar el logo
+    foto: { modo: 'ajustar', ancho: 1280, alto: 960 },       // foto del equipo
+    jugador: { modo: 'recortar', lado: 320 },               // cuadrada, centrada
+    info: { modo: 'ajustar', ancho: 1600, alto: 2400 }       // carteles e imágenes del reglamento
+  };
+
+  async function cargarImagen(file) {
+    if (window.createImageBitmap) {
+      try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) { /* se intenta abajo */ }
+    }
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  /** Reduce y comprime la imagen en el dispositivo antes de subirla. */
+  async function procesarImagen(file, o) {
+    const img = await cargarImagen(file);
+    const w = img.width, h = img.height;
+    if (!w || !h) throw new Error('imagen vacía');
+    let sx = 0, sy = 0, sw = w, sh = h, cw, ch, dx = 0, dy = 0, dw, dh;
+    if (o.modo === 'recortar') {
+      const lado = Math.min(w, h);
+      sx = (w - lado) / 2; sy = (h - lado) / 2; sw = sh = lado;
+      cw = ch = dw = dh = Math.min(o.lado, lado);
+    } else if (o.modo === 'contener') {
+      cw = ch = o.lado;
+      const k = Math.min(o.lado / w, o.lado / h);
+      dw = Math.round(w * k); dh = Math.round(h * k);
+      dx = Math.round((cw - dw) / 2); dy = Math.round((ch - dh) / 2);
+    } else {
+      const k = Math.min(1, o.ancho / w, o.alto / h);
+      cw = dw = Math.round(w * k); ch = dh = Math.round(h * k);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = cw; canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+    let url = canvas.toDataURL('image/webp', 0.85), ext = 'webp';
+    if (!url.startsWith('data:image/webp')) {
+      if (o.alfa) { url = canvas.toDataURL('image/png'); ext = 'png'; }
+      else { url = canvas.toDataURL('image/jpeg', 0.85); ext = 'jpg'; }
+    }
+    return { url, ext, base64: url.slice(url.indexOf(',') + 1) };
+  }
+
+  async function subirImagen(input) {
+    const file = input.files && input.files[0];
+    const tipo = input.dataset.img;
+    input.value = '';
+    if (!file || !OPC_IMG[tipo]) return;
+    const t = torneo();
+    const e = t && t.equipos.find(x => x.id === input.dataset.id);
+    const j = tipo === 'jugador' && e ? e.jugadores.find(x => x.id === input.dataset.pl) : null;
+    if (!e || (tipo === 'jugador' && !j)) return;
+
+    toast('Preparando imagen…');
+    let img;
+    try { img = await procesarImagen(file, OPC_IMG[tipo]); }
+    catch (err) { toast('No pude leer esa imagen. Prueba con otra en JPG o PNG.', 'err'); return; }
+
+    let valor = img.url;                       // en modo prueba la imagen va dentro del archivo de datos
+    if (!modoPrueba()) {
+      const nombre = tipo === 'jugador' ? `jugador-${j.id}` : `${tipo}-${e.id}`;
+      const ruta = `media/${P.slug(t.id)}/${nombre}-${Date.now().toString(36)}.${img.ext}`;
+      toast('Subiendo imagen a GitHub…');
+      try {
+        await P.escribirArchivoGitHub(repoDe(S.conn), S.conn.token, ruta, img.base64, null,
+          `Imagen de ${tipo === 'jugador' ? j.nombre : e.nombre} (${tipo})`);
+      } catch (err) { toast(mensajeError(err), 'err'); return; }
+      P.cacheImg[ruta] = img.url;
+      valor = ruta;
+    }
+    if (j) j.foto = valor; else e[tipo] = valor;
+    S.abiertos.add(e.id);
+    cambio(true);
+    toast('Imagen lista. Presiona Publicar para que todos la vean.');
+  }
+
   /* ---------- acciones ---------- */
   async function nuevoTorneo() {
     const fd = await dialogo({
@@ -641,7 +866,7 @@
     const completas = pr.filas.filter(f => f.l && f.v && existe(f.l) && existe(f.v));
     if (!completas.length) { toast('Elige los equipos de al menos un enfrentamiento.', 'err'); return; }
     if (completas.some(f => f.l === f.v)) { toast('Un equipo no puede jugar contra sí mismo.', 'err'); return; }
-    completas.forEach(f => t.partidos.push({ id: P.uid(), local: f.l, visita: f.v, fecha: pr.fecha, estado: 'pendiente', sl: null, sv: null }));
+    completas.forEach(f => t.partidos.push({ id: P.uid(), local: f.l, visita: f.v, fecha: pr.fecha, hora: f.h || '', estado: 'pendiente', sl: null, sv: null }));
     pr.filas = filasVacias(t);
     S.ocultarJugadas = false;
     S.irA = 's-' + P.lunesDe(pr.fecha);
@@ -684,7 +909,7 @@
 
       case 'prog-mas': {
         const pr = prog(t);
-        pr.filas.push({ l: '', v: '' });
+        pr.filas.push({ l: '', v: '', h: '' });
         S.foco = `prog:${pr.filas.length - 1}:l`;
         render();
         return;
@@ -704,6 +929,29 @@
           if (!ok) return;
         }
         t.partidos = t.partidos.filter(x => x !== p);
+        cambio(true);
+        return;
+      }
+
+      case 'borrar-adj': {
+        t.infoAdjuntos = t.infoAdjuntos.filter(a => a.id !== b.dataset.adj);
+        cambio(true);
+        return;
+      }
+      case 'borrar-jugador': {
+        if (!e) return;
+        e.jugadores = e.jugadores.filter(j => j.id !== b.dataset.pl);
+        cambio(true);
+        return;
+      }
+      case 'quitar-img': {
+        if (!e) return;
+        if (b.dataset.tipo === 'jugador') {
+          const j = e.jugadores.find(x => x.id === b.dataset.pl);
+          if (j) j.foto = '';
+        } else if (b.dataset.tipo === 'logo' || b.dataset.tipo === 'foto') {
+          e[b.dataset.tipo] = '';
+        }
         cambio(true);
         return;
       }
@@ -764,23 +1012,35 @@
     if (!t) return;
     const fd = new FormData(f);
     const existe = nombre => t.equipos.some(x => x.nombre.trim().toLowerCase() === nombre.trim().toLowerCase());
-    const nuevo = (nombre, jugadores) => ({ id: P.uid(), nombre: nombre.slice(0, 40), jugadores, ajustes: {}, notaAjuste: '' });
+    const jugadoresDe = nombres => nombres.map(n => ({ id: P.uid(), nombre: n.slice(0, 40), foto: '' }));
+    const nuevo = (nombre, jugadores, extra) => Object.assign(
+      { id: P.uid(), nombre: nombre.slice(0, 40), logo: '', foto: '', jugadores, ajustes: {}, notaAjuste: '' }, extra || {});
 
-    if (f.dataset.form === 'equipo') {
+    if (f.dataset.form === 'jugador') {
+      const e = t.equipos.find(x => x.id === f.dataset.id);
+      const nombre = String(fd.get('nombre') || '').trim();
+      if (!e || !nombre) return;
+      if (e.jugadores.some(j => j.nombre.toLowerCase() === nombre.toLowerCase())) { toast('Ese jugador ya está en el equipo.', 'err'); return; }
+      e.jugadores.push({ id: P.uid(), nombre: nombre.slice(0, 40), foto: '' });
+      S.foco = `nj:${e.id}`;
+      cambio(true);
+    } else if (f.dataset.form === 'equipo') {
       const nombre = String(fd.get('nombre') || '').trim();
       if (!nombre) return;
       if (existe(nombre)) { toast('Ya hay un equipo con ese nombre.', 'err'); return; }
-      t.equipos.push(nuevo(nombre, separar(fd.get('jugadores'))));
+      const e = nuevo(nombre, jugadoresDe(separar(fd.get('jugadores'))));
+      t.equipos.push(e);
+      S.abiertos.add(e.id);
       S.foco = 'nuevo-equipo';
       cambio(true);
-      toast(`“${nombre}” agregado.`);
+      toast(`“${nombre}” agregado. Ábrelo abajo para subir su logo y fotos.`);
     } else if (f.dataset.form === 'lote') {
       let n = 0;
       String(fd.get('lista') || '').split('\n').forEach(linea => {
         const [nom, jug] = linea.split(/:(.*)/s);
         const nombre = String(nom || '').trim();
         if (!nombre || existe(nombre)) return;
-        t.equipos.push(nuevo(nombre, separar(jug)));
+        t.equipos.push(nuevo(nombre, jugadoresDe(separar(jug))));
         n++;
       });
       if (!n) { toast('No se agregó ningún equipo (vacío o repetidos).', 'err'); return; }
@@ -792,7 +1052,7 @@
       let n = 0;
       origen.equipos.forEach(x => {
         if (existe(x.nombre)) return;
-        t.equipos.push(nuevo(x.nombre, x.jugadores.slice()));
+        t.equipos.push(nuevo(x.nombre, x.jugadores.map(j => ({ id: P.uid(), nombre: j.nombre, foto: j.foto })), { logo: x.logo, foto: x.foto }));
         n++;
       });
       if (!n) { toast('Esos equipos ya están en este torneo.', 'err'); return; }
@@ -821,7 +1081,7 @@
 
       case 'torneo':
         if (k === 'nombre') { const v = String(val).trim(); if (!v) { render(); return; } t.nombre = v; }
-        else if (k === 'visible') t.visible = !!val;
+        else if (k === 'visible' || k === 'finalizado') t[k] = !!val;
         else t[k] = String(val).trim();
         break;
 
@@ -836,8 +1096,23 @@
       case 'equipo':
         if (!e) return;
         if (k === 'nombre') { const v = String(val).trim(); if (!v) { render(); return; } e.nombre = v.slice(0, 40); }
-        else if (k === 'jugadores') e.jugadores = separar(val);
         break;
+
+      case 'adjunto': {
+        const a = t.infoAdjuntos.find(x => x.id === el.dataset.adj);
+        if (!a) return;
+        a.nombre = String(val).trim().slice(0, 80) || a.nombre;
+        break;
+      }
+
+      case 'jugador': {
+        const j = e && e.jugadores.find(x => x.id === el.dataset.pl);
+        if (!j) return;
+        const v = String(val).trim();
+        if (!v) { render(); return; }
+        j.nombre = v.slice(0, 40);
+        break;
+      }
 
       case 'partido':
         if (!p) return;
@@ -885,8 +1160,21 @@
   document.addEventListener('change', ev => {
     const el = ev.target;
     if (el.id === 'archivo-importar') { importar(el); return; }
+    if (el.dataset && el.dataset.img && S.data) { subirImagen(el); return; }
+    if (el.dataset && el.dataset.adjunto && S.data) { subirAdjuntos(el); return; }
     if (el.dataset && el.dataset.ch && S.data) editar(el);
   });
+  // El reglamento se guarda mientras escribes (no solo al salir del campo)
+  document.addEventListener('input', ev => {
+    if (ev.target.dataset && ev.target.dataset.vivo === 'info' && S.data) escribiendoInfo(ev.target);
+  });
+  // Recuerda qué equipos están abiertos en el editor
+  document.addEventListener('toggle', ev => {
+    const d = ev.target;
+    if (d && d.matches && d.matches('details.eq-ed')) {
+      if (d.open) S.abiertos.add(d.dataset.eq); else S.abiertos.delete(d.dataset.eq);
+    }
+  }, true);
   document.addEventListener('submit', ev => {
     const f = ev.target;
     if (f.id === 'form-conexion') { ev.preventDefault(); conectar(f); return; }
