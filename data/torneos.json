@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-23T17:16:01.911Z",
+  "actualizado": "2026-11-23T17:59:15.372Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -39,7 +39,7 @@
         {
           "id": "nxvb9go5f",
           "nombre": "Restaurante El Mirador",
-          "logo": "",
+          "logo": "media/intersemanal/logo-nxvb9go5f-mwtkk26f.webp",
           "foto": "",
           "jugadores": [
             {
@@ -124,7 +124,7 @@
         {
           "id": "0nnbfgo5f",
           "nombre": "Atoleros FC",
-          "logo": "",
+          "logo": "media/intersemanal/logo-0nnbfgo5f-mwtkkice.webp",
           "foto": "",
           "jugadores": [],
           "ajustes": {},
@@ -142,7 +142,7 @@
         {
           "id": "vge0gv1bi",
           "nombre": "Fuga Coaching & Asoc.",
-          "logo": "",
+          "logo": "media/intersemanal/logo-vge0gv1bi-mwtkl0mc.webp",
           "foto": "",
           "jugadores": [
             {
@@ -167,7 +167,7 @@
         {
           "id": "fu24g17hd",
           "nombre": "Huevos F.C.",
-          "logo": "",
+          "logo": "media/intersemanal/logo-fu24g17hd-mwtklbjz.webp",
           "foto": "",
           "jugadores": [],
           "ajustes": {},
