@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-23T16:45:48.542Z",
+  "actualizado": "2026-11-23T17:16:01.911Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -140,15 +140,6 @@
           "notaAjuste": ""
         },
         {
-          "id": "veuwokufd",
-          "nombre": "Performance",
-          "logo": "",
-          "foto": "",
-          "jugadores": [],
-          "ajustes": {},
-          "notaAjuste": ""
-        },
-        {
           "id": "vge0gv1bi",
           "nombre": "Fuga Coaching & Asoc.",
           "logo": "",
@@ -172,6 +163,15 @@
           ],
           "ajustes": {},
           "notaAjuste": ""
+        },
+        {
+          "id": "fu24g17hd",
+          "nombre": "Huevos F.C.",
+          "logo": "",
+          "foto": "",
+          "jugadores": [],
+          "ajustes": {},
+          "notaAjuste": ""
         }
       ],
       "partidos": [
@@ -184,16 +184,6 @@
           "estado": "jugado",
           "sl": 1,
           "sv": 3
-        },
-        {
-          "id": "50ixpl5er",
-          "local": "qsi0igo5f",
-          "visita": "veuwokufd",
-          "fecha": "2026-11-11",
-          "hora": "",
-          "estado": "jugado",
-          "sl": 3,
-          "sv": 0
         },
         {
           "id": "lgilxlyfe",
