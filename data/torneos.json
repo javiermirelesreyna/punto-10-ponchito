@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-23T16:41:58.014Z",
+  "actualizado": "2026-11-23T16:44:54.444Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -145,6 +145,31 @@
           "logo": "",
           "foto": "",
           "jugadores": [],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "vge0gv1bi",
+          "nombre": "Fuga Coaching & Asoc.",
+          "logo": "",
+          "foto": "",
+          "jugadores": [
+            {
+              "id": "fyk2cv1bi",
+              "nombre": "Jorge",
+              "foto": ""
+            },
+            {
+              "id": "jdd1tv1bi",
+              "nombre": "Emilio",
+              "foto": ""
+            },
+            {
+              "id": "kntj1v1bi",
+              "nombre": "Alejandro",
+              "foto": ""
+            }
+          ],
           "ajustes": {},
           "notaAjuste": ""
         }
