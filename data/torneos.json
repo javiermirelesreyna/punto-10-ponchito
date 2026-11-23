@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-23T17:59:15.372Z",
+  "actualizado": "2026-11-23T18:31:20.075Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -84,7 +84,7 @@
         {
           "id": "lsz5cgo5f",
           "nombre": "Jabatos FC",
-          "logo": "",
+          "logo": "media/intersemanal/logo-lsz5cgo5f-mwtlq3ev.webp",
           "foto": "",
           "jugadores": [
             {
@@ -104,7 +104,7 @@
         {
           "id": "qsi0igo5f",
           "nombre": "Transportes Alzar",
-          "logo": "",
+          "logo": "media/intersemanal/logo-qsi0igo5f-mwtlqg5c.webp",
           "foto": "",
           "jugadores": [
             {
