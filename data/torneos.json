@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-23T16:40:31.568Z",
+  "actualizado": "2026-11-23T16:41:58.014Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -325,6 +325,16 @@
           "estado": "wo_local",
           "sl": null,
           "sv": null
+        },
+        {
+          "id": "0ktg0tc6q",
+          "local": "rw1fhggo6",
+          "visita": "cnw5xfpwr",
+          "fecha": "2026-11-14",
+          "hora": "08:00",
+          "estado": "jugado",
+          "sl": 3,
+          "sv": 1
         }
       ],
       "finalizado": false,
