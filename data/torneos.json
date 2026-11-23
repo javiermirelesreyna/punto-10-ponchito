@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-19T21:34:14.983Z",
+  "actualizado": "2026-11-23T04:29:04.835Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -19,9 +19,19 @@
         {
           "id": "16r0rbzk6",
           "nombre": "Picksin",
+          "logo": "",
+          "foto": "",
           "jugadores": [
-            "Javier",
-            "Ilse"
+            {
+              "id": "wzg24f3b9",
+              "nombre": "Javier",
+              "foto": ""
+            },
+            {
+              "id": "6b8mqf3b9",
+              "nombre": "Ilse",
+              "foto": ""
+            }
           ],
           "ajustes": {},
           "notaAjuste": ""
@@ -29,9 +39,19 @@
         {
           "id": "nxvb9go5f",
           "nombre": "Restaurante El Mirador",
+          "logo": "",
+          "foto": "",
           "jugadores": [
-            "Gustavo",
-            "Hugo"
+            {
+              "id": "br8ijf3b9",
+              "nombre": "Gustavo",
+              "foto": ""
+            },
+            {
+              "id": "juaq7f3b9",
+              "nombre": "Hugo",
+              "foto": ""
+            }
           ],
           "ajustes": {},
           "notaAjuste": ""
@@ -39,10 +59,24 @@
         {
           "id": "kukx6go5f",
           "nombre": "Ledmotion",
+          "logo": "",
+          "foto": "",
           "jugadores": [
-            "Julio",
-            "Cesar",
-            "Mateo"
+            {
+              "id": "nr9zhf3b9",
+              "nombre": "Julio",
+              "foto": ""
+            },
+            {
+              "id": "9dqmnf3b9",
+              "nombre": "Cesar",
+              "foto": ""
+            },
+            {
+              "id": "jmrjxf3ba",
+              "nombre": "Mateo",
+              "foto": ""
+            }
           ],
           "ajustes": {},
           "notaAjuste": ""
@@ -50,9 +84,19 @@
         {
           "id": "lsz5cgo5f",
           "nombre": "Jabatos FC",
+          "logo": "",
+          "foto": "",
           "jugadores": [
-            "Abraham",
-            "Leandro"
+            {
+              "id": "eccdqf3ba",
+              "nombre": "Abraham",
+              "foto": ""
+            },
+            {
+              "id": "0tdmkf3ba",
+              "nombre": "Leandro",
+              "foto": ""
+            }
           ],
           "ajustes": {},
           "notaAjuste": ""
@@ -60,9 +104,19 @@
         {
           "id": "qsi0igo5f",
           "nombre": "Transportes Alzar",
+          "logo": "",
+          "foto": "",
           "jugadores": [
-            "Alejandro",
-            "Fernando"
+            {
+              "id": "rybvuf3ba",
+              "nombre": "Alejandro",
+              "foto": ""
+            },
+            {
+              "id": "42m92f3ba",
+              "nombre": "Fernando",
+              "foto": ""
+            }
           ],
           "ajustes": {},
           "notaAjuste": ""
@@ -70,6 +124,8 @@
         {
           "id": "0nnbfgo5f",
           "nombre": "Atoleros FC",
+          "logo": "",
+          "foto": "",
           "jugadores": [],
           "ajustes": {},
           "notaAjuste": ""
@@ -77,6 +133,8 @@
         {
           "id": "w4xbego5f",
           "nombre": "Ramos FC",
+          "logo": "",
+          "foto": "",
           "jugadores": [],
           "ajustes": {},
           "notaAjuste": ""
@@ -84,6 +142,8 @@
         {
           "id": "veuwokufd",
           "nombre": "Performance",
+          "logo": "",
+          "foto": "",
           "jugadores": [],
           "ajustes": {},
           "notaAjuste": ""
@@ -95,6 +155,7 @@
           "local": "16r0rbzk6",
           "visita": "nxvb9go5f",
           "fecha": "2026-11-12",
+          "hora": "",
           "estado": "jugado",
           "sl": 1,
           "sv": 3
@@ -104,6 +165,7 @@
           "local": "qsi0igo5f",
           "visita": "veuwokufd",
           "fecha": "2026-11-11",
+          "hora": "",
           "estado": "jugado",
           "sl": 3,
           "sv": 0
@@ -113,6 +175,7 @@
           "local": "16r0rbzk6",
           "visita": "qsi0igo5f",
           "fecha": "2026-11-17",
+          "hora": "",
           "estado": "jugado",
           "sl": 3,
           "sv": 1
@@ -122,11 +185,15 @@
           "local": "16r0rbzk6",
           "visita": "kukx6go5f",
           "fecha": "2026-11-24",
+          "hora": "",
           "estado": "pendiente",
           "sl": null,
           "sv": null
         }
-      ]
+      ],
+      "finalizado": false,
+      "info": "",
+      "infoAdjuntos": []
     },
     {
       "id": "sabatino",
@@ -141,8 +208,108 @@
         "setsParaGanar": 3,
         "clasifican": 0
       },
-      "equipos": [],
-      "partidos": []
+      "equipos": [
+        {
+          "id": "cnw5xfpwr",
+          "nombre": "Ledmotion",
+          "logo": "",
+          "foto": "",
+          "jugadores": [
+            {
+              "id": "ruh77fpwr",
+              "nombre": "Cesar",
+              "foto": ""
+            },
+            {
+              "id": "swt3hfpwr",
+              "nombre": "Julio Cesar",
+              "foto": ""
+            },
+            {
+              "id": "mr2wafpwr",
+              "nombre": "Mateo",
+              "foto": ""
+            }
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "nbowfg3ku",
+          "nombre": "Ramos Team",
+          "logo": "",
+          "foto": "",
+          "jugadores": [
+            {
+              "id": "ufzhmg3ku",
+              "nombre": "Emilio",
+              "foto": ""
+            },
+            {
+              "id": "66sg9g3ku",
+              "nombre": "Santiago",
+              "foto": ""
+            }
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "rw1fhggo6",
+          "nombre": "Transportes Alzar",
+          "logo": "",
+          "foto": "",
+          "jugadores": [
+            {
+              "id": "iv9okggo6",
+              "nombre": "Alejandro",
+              "foto": ""
+            }
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        },
+        {
+          "id": "gfsr2gvem",
+          "nombre": "Diego's Team",
+          "logo": "",
+          "foto": "",
+          "jugadores": [
+            {
+              "id": "icix4gvem",
+              "nombre": "Diego Jasso",
+              "foto": ""
+            }
+          ],
+          "ajustes": {},
+          "notaAjuste": ""
+        }
+      ],
+      "partidos": [
+        {
+          "id": "45sv9lq8i",
+          "local": "gfsr2gvem",
+          "visita": "cnw5xfpwr",
+          "fecha": "2026-11-11",
+          "hora": "19:30",
+          "estado": "wo_visita",
+          "sl": null,
+          "sv": null
+        },
+        {
+          "id": "4wbljmyke",
+          "local": "cnw5xfpwr",
+          "visita": "nbowfg3ku",
+          "fecha": "2026-11-21",
+          "hora": "21:00",
+          "estado": "wo_local",
+          "sl": null,
+          "sv": null
+        }
+      ],
+      "finalizado": false,
+      "info": "",
+      "infoAdjuntos": []
     }
   ]
 }
