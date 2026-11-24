@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-24T15:40:40.132Z",
+  "actualizado": "2026-11-24T16:09:58.306Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -133,7 +133,7 @@
         {
           "id": "w4xbego5f",
           "nombre": "Ramos Team",
-          "logo": "",
+          "logo": "media/intersemanal/logo-w4xbego5f-mwuw4jkm.webp",
           "foto": "",
           "jugadores": [],
           "ajustes": {},
