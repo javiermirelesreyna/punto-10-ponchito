@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-23T18:31:20.075Z",
+  "actualizado": "2026-11-24T13:38:18.820Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -199,8 +199,8 @@
           "id": "76q4tv6ge",
           "local": "16r0rbzk6",
           "visita": "kukx6go5f",
-          "fecha": "2026-11-24",
-          "hora": "",
+          "fecha": "2026-11-26",
+          "hora": "07:30",
           "estado": "pendiente",
           "sl": null,
           "sv": null
@@ -234,6 +234,46 @@
           "estado": "jugado",
           "sl": 1,
           "sv": 3
+        },
+        {
+          "id": "hqlezj8ai",
+          "local": "vge0gv1bi",
+          "visita": "qsi0igo5f",
+          "fecha": "2026-11-24",
+          "hora": "20:10",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
+        },
+        {
+          "id": "oto6tnt4g",
+          "local": "lsz5cgo5f",
+          "visita": "0nnbfgo5f",
+          "fecha": "2026-11-25",
+          "hora": "07:30",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
+        },
+        {
+          "id": "ys0qqoplg",
+          "local": "nxvb9go5f",
+          "visita": "fu24g17hd",
+          "fecha": "2026-11-26",
+          "hora": "08:10",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
+        },
+        {
+          "id": "fc6nupfwt",
+          "local": "fu24g17hd",
+          "visita": "w4xbego5f",
+          "fecha": "2026-11-27",
+          "hora": "19:30",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
         }
       ],
       "finalizado": false,
