@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-24T16:09:58.306Z",
+  "actualizado": "2026-11-24T16:10:46.777Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -322,7 +322,7 @@
         {
           "id": "nbowfg3ku",
           "nombre": "Ramos Team",
-          "logo": "",
+          "logo": "media/sabatino/logo-nbowfg3ku-mwuw59jk.webp",
           "foto": "",
           "jugadores": [
             {
@@ -342,7 +342,7 @@
         {
           "id": "rw1fhggo6",
           "nombre": "Transportes Alzar",
-          "logo": "",
+          "logo": "media/sabatino/logo-rw1fhggo6-mwuw5lj4.webp",
           "foto": "",
           "jugadores": [
             {
