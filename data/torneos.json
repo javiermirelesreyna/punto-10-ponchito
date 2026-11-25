@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-25T04:02:38.426Z",
+  "actualizado": "2026-11-25T21:57:39.526Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -19,7 +19,7 @@
         {
           "id": "16r0rbzk6",
           "nombre": "Picksin",
-          "logo": "",
+          "logo": "media/intersemanal/logo-16r0rbzk6-mwwnzafk.webp",
           "foto": "",
           "jugadores": [
             {
