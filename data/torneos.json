@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-25T03:13:28.747Z",
+  "actualizado": "2026-11-25T04:02:38.426Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -105,7 +105,7 @@
           "id": "qsi0igo5f",
           "nombre": "Transportes Alzar",
           "logo": "media/intersemanal/logo-qsi0igo5f-mwtlqg5c.webp",
-          "foto": "",
+          "foto": "media/intersemanal/foto-qsi0igo5f-mwvljerw.webp",
           "jugadores": [
             {
               "id": "rybvuf3ba",
