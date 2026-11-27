@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-25T21:57:39.526Z",
+  "actualizado": "2026-11-27T15:01:02.751Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -251,9 +251,9 @@
           "visita": "0nnbfgo5f",
           "fecha": "2026-11-25",
           "hora": "19:30",
-          "estado": "pendiente",
-          "sl": null,
-          "sv": null
+          "estado": "jugado",
+          "sl": 2,
+          "sv": 3
         },
         {
           "id": "ys0qqoplg",
