@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-11-27T15:01:02.751Z",
+  "actualizado": "2026-11-28T01:47:50.368Z",
   "torneos": [
     {
       "id": "intersemanal",
@@ -400,6 +400,36 @@
           "estado": "jugado",
           "sl": 3,
           "sv": 1
+        },
+        {
+          "id": "kfzkq1zvj",
+          "local": "gfsr2gvem",
+          "visita": "nbowfg3ku",
+          "fecha": "2026-11-30",
+          "hora": "20:10",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
+        },
+        {
+          "id": "0zj972vjr",
+          "local": "nbowfg3ku",
+          "visita": "rw1fhggo6",
+          "fecha": "2026-11-30",
+          "hora": "19:30",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
+        },
+        {
+          "id": "r0p15ad2d",
+          "local": "gfsr2gvem",
+          "visita": "rw1fhggo6",
+          "fecha": "2026-12-03",
+          "hora": "20:10",
+          "estado": "pendiente",
+          "sl": null,
+          "sv": null
         }
       ],
       "finalizado": false,
